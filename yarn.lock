@@ -7,6 +7,11 @@
   resolved "https://registry.yarnpkg.com/@telegraf/types/-/types-6.8.1.tgz#c9c567e8ba4fb3c656494f3901a7dfb22cb7d676"
   integrity sha512-JCRQuPPDCreYQaAeOwnqIlWrs8pJVvaNEUWBVNvdK3oJoTUKyBV+3TsPrIcnGqLeapptznuTk5s4udTlZPvGTA==
 
+"@types/node@^20.5.9":
+  version "20.5.9"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-20.5.9.tgz#a70ec9d8fa0180a314c3ede0e20ea56ff71aed9a"
+  integrity sha512-PcGNd//40kHAS3sTlzKB9C9XL4K0sTup8nbG5lC14kzEteTNuAFh9u5nA0o5TWnSG2r/JNPRXFVcHJIIeRlmqQ==
+
 abort-controller@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/abort-controller/-/abort-controller-3.0.0.tgz#eaf54d53b62bae4138e809ca225c8439a6efb392"

@@ -6,6 +6,7 @@ config();
 
 import { Telegraf, Markup } from 'telegraf';
 import { getWeekNumber, parityOfWeek, numberCouples, parityWeek, loadJSON } from './src/utils.js';
+import { Schedule } from './src/types/index.types.js';
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
@@ -18,22 +19,33 @@ bot.start(async (ctx) => {
   );
 });
 
-bot.hears('👁 Schedule', (ctx) => {
-  const parsedJSON = loadJSON('./schedule.json');
+const loadJsonAndReturnedAll = () => {
+  const scheduleJson: Schedule[] = loadJSON('./schedule.json');
 
   const currentDate = new Date();
   const weekNumber = getWeekNumber(currentDate);
   const dayOfWeek = currentDate.toLocaleString('ru-RU', { weekday: 'long' });
   const parity = parityOfWeek();
 
-  const findedSchedule = [...parsedJSON]
+  return {
+    scheduleJson,
+    currentDate,
+    weekNumber,
+    dayOfWeek,
+    parity,
+  };
+};
+
+bot.hears('👁 Schedule', (ctx) => {
+  const { scheduleJson, weekNumber, dayOfWeek, parity } = loadJsonAndReturnedAll();
+  const findedSchedule = scheduleJson
     .find(({ day }) => day === dayOfWeek)
-    .couples.filter(
-      ({ parity: couplesParity, weekNumbers }) =>
-        couplesParity === parity && (!weekNumbers || weekNumbers.includes(weekNumber)),
+    ?.couples.filter(
+      ({ parity: coupleParity, weekNumbers }) =>
+        coupleParity === parity && (!weekNumbers || weekNumbers.includes(weekNumber)),
     );
 
-  if (!findedSchedule.length) {
+  if (!findedSchedule?.length) {
     return ctx.reply('Сегодня занятий нету');
   }
 
@@ -42,6 +54,7 @@ bot.hears('👁 Schedule', (ctx) => {
 ${findedSchedule
   .map(
     (value) =>
+      //@ts-ignore
       `${numberCouples[value.time]} пара (${value.time}) \n${value.name} [${value.teacher}] [${
         value.auditory
       }]`,
@@ -51,13 +64,9 @@ ${findedSchedule
 });
 
 bot.hears('Вся неделя', (ctx) => {
-  const parsedJSON = loadJSON('./schedule.json');
+  const { scheduleJson, weekNumber, parity } = loadJsonAndReturnedAll();
 
-  const currentDate = new Date();
-  const weekNumber = getWeekNumber(currentDate);
-  const parity = parityOfWeek();
-
-  const findedSchedule = [...parsedJSON].map((value) => {
+  const findedSchedule = [...scheduleJson].map((value) => {
     return {
       day: value.day,
       couples: value.couples.filter(
@@ -78,6 +87,7 @@ bot.hears('Вся неделя', (ctx) => {
           value.couples
             .map(
               (value) =>
+                //@ts-ignore
                 `${numberCouples[value.time]} пара (${value.time}) \n${value.name} [${
                   value.teacher
                 }] [${value.auditory}]`,

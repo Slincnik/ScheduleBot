@@ -1,7 +1,8 @@
 import fs from 'fs';
+import { Parity } from './types/index.types.js';
 
-const getWeek = function (nowDate) {
-  var date = new Date(nowDate.getTime());
+const getWeek = function (nowDate: Date) {
+  const date = new Date(nowDate.getTime());
   date.setHours(0, 0, 0, 0);
   // Thursday in current week decides the year.
   date.setDate(date.getDate() + 3 - ((date.getDay() + 6) % 7));
@@ -14,7 +15,7 @@ const getWeek = function (nowDate) {
   );
 };
 
-export const getWeekNumber = (nowDate) => {
+export const getWeekNumber = (nowDate: Date) => {
   const firstSeptemberDate = new Date(2023, 8, 1, 3, 0, 0, 0);
 
   const numberTheWeek = getWeek(nowDate);
@@ -23,7 +24,7 @@ export const getWeekNumber = (nowDate) => {
   return numberTheWeek - numberTheWeekSeptember + 1;
 };
 
-export const parityOfWeek = () => {
+export const parityOfWeek = (): Parity => {
   var d0 = new Date().getTime(),
     d = new Date(new Date().getFullYear(), 0, 1),
     d1 = d.getTime(),
@@ -33,7 +34,10 @@ export const parityOfWeek = () => {
   return Math.floor(re / 7) % 2 ? 'numerator' : 'denominator';
 };
 
-export const loadJSON = (path) => JSON.parse(fs.readFileSync(new URL(path, import.meta.url)));
+export const loadJSON = (path: string) => {
+  const readFile = fs.readFileSync(new URL(path, import.meta.url)) as unknown as string;
+  return JSON.parse(readFile);
+};
 
 export const numberCouples = {
   '15:15-16:50': '5-я',
