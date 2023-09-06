@@ -18,12 +18,19 @@ const getWeek = function (nowDate: Date) {
 export const getWeekNumber = (nowDate: Date) => {
   const firstSeptemberDate = new Date(2023, 8, 1, 3, 0, 0, 0);
 
+  const newYearDate = new Date('2024-01-01');
   const numberTheWeek = getWeek(nowDate);
   const numberTheWeekSeptember = getWeek(firstSeptemberDate);
 
-  return numberTheWeek - numberTheWeekSeptember + 1;
+  if (nowDate.getTime() >= newYearDate.getTime()) {
+    const lastDayOfYear = new Date('2023-12-31');
+    const numberTheLastDayOfYear = getWeek(lastDayOfYear);
+
+    return numberTheWeek - numberTheLastDayOfYear - numberTheWeekSeptember + 1;
+  } else return numberTheWeek - numberTheWeekSeptember + 1;
 };
 
+getWeekNumber(new Date());
 export const parityOfWeek = (): Parity => {
   var d0 = new Date().getTime(),
     d = new Date(new Date().getFullYear(), 0, 1),
