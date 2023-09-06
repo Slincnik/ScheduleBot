@@ -5,12 +5,16 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node dist/index.js"
+    "start": "node dist/index.js",
+    "build": "tsc --build"
   },
   "author": "Slincnik",
   "license": "ISC",
   "dependencies": {
     "dotenv": "^16.3.1",
     "telegraf": "^4.13.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.5.9"
   }
 }
