@@ -8,15 +8,10 @@ import { Telegraf, Markup } from 'telegraf';
 import { getWeekNumber, parityOfWeek, numberCouples, parityWeek, loadJSON } from './src/utils.js';
 import { Schedule } from './src/types/index.types.js';
 
-const bot = new Telegraf(process.env.BOT_TOKEN);
+const bot = new Telegraf(process.env.BOT_TOKEN as string);
 
 bot.start(async (ctx) => {
-  await ctx.reply(
-    'Привет',
-    Markup.keyboard([['👁 Schedule', 'Вся неделя']])
-      .oneTime()
-      .resize(),
-  );
+  await ctx.reply('Привет', Markup.keyboard([['👁 Schedule', 'Вся неделя']]).resize());
 });
 
 const loadJsonAndReturnedAll = () => {
@@ -38,9 +33,10 @@ const loadJsonAndReturnedAll = () => {
 
 bot.hears('👁 Schedule', (ctx) => {
   const { scheduleJson, weekNumber, dayOfWeek, parity } = loadJsonAndReturnedAll();
+
   const findedSchedule = scheduleJson
     .find(({ day }) => day === dayOfWeek)
-    ?.couples.filter(
+    ?.couples?.filter(
       ({ parity: coupleParity, weekNumbers }) =>
         coupleParity === parity && (!weekNumbers || weekNumbers.includes(weekNumber)),
     );
