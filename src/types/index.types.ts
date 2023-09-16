@@ -3,7 +3,7 @@ export type Schedule = {
   couples: Couples[];
 };
 
-type Couples = {
+export type Couples = {
   name: string;
   auditory: string;
   teacher: string;
