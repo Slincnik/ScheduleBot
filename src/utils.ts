@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { Parity } from './types/index.types.js';
+import { Couples, Parity, Schedule } from './types/index.types.js';
 
 const getWeek = function (nowDate: Date) {
   const date = new Date(nowDate.getTime());
@@ -30,16 +30,50 @@ export const getWeekNumber = (nowDate: Date) => {
   } else return numberTheWeek - numberTheWeekSeptember + 1;
 };
 
-getWeekNumber(new Date());
-export const parityOfWeek = (): Parity => {
-  var d0 = new Date().getTime(),
-    d = new Date(new Date().getFullYear(), 0, 1),
+export const parityOfWeek = (nowDate: Date): Parity => {
+  var d0 = new Date(nowDate).getTime(),
+    d = new Date(new Date(nowDate).getFullYear(), 0, 1),
     d1 = d.getTime(),
     dd = d.getDay(),
     re = Math.floor((d0 - d1) / 8.64e7) + (dd ? dd - 1 : 6);
 
   return Math.floor(re / 7) % 2 ? 'numerator' : 'denominator';
 };
+
+
+export const returnCouplesMessage = (couples: Couples) => {
+  //@ts-ignore
+  return `${numberCouples[couples.time]} пара (${couples.time}) \n${couples.name} [${
+    couples.teacher
+  }] [${couples.auditory}]`;
+};
+
+export const returnScheduleFromDayOfWeek = (
+  scheduleJson: Schedule[],
+  dayOfWeek: string,
+  parity: Parity,
+  weekNumber: number,
+) => {
+  return [...scheduleJson]
+    .find(({ day }) => day === dayOfWeek)
+    ?.couples?.filter(
+      ({ parity: coupleParity, weekNumbers }) =>
+        coupleParity === parity && (!weekNumbers || weekNumbers.includes(weekNumber)),
+    );
+};
+
+export const returnScheduleFromWeek = (scheduleJson: Schedule[], parity: Parity, weekNumber: number) => {
+  return [...scheduleJson].map((value) => {
+    return {
+      day: value.day,
+      couples: value.couples.filter(
+        ({ parity: couplesParity, weekNumbers }) =>
+          couplesParity === parity && (!weekNumbers || weekNumbers.includes(weekNumber)),
+      ),
+    };
+  });
+};
+
 
 export const loadJSON = (path: string) => {
   const readFile = fs.readFileSync(new URL(path, import.meta.url)) as unknown as string;
