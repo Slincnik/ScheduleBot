@@ -1,45 +1,35 @@
 import fs from 'fs';
+import { DateTime } from 'luxon';
 import { Couples, Parity, Schedule } from './types/index.types.js';
 
-const getWeek = function (nowDate: Date) {
-  const date = new Date(nowDate.getTime());
-  date.setHours(0, 0, 0, 0);
-  // Thursday in current week decides the year.
-  date.setDate(date.getDate() + 3 - ((date.getDay() + 6) % 7));
-  // January 4 is always in week 1.
-  var week1 = new Date(date.getFullYear(), 0, 4);
-  // Adjust to Thursday in week 1 and count number of weeks from date to week1.
-  return (
-    1 +
-    Math.round(((date.getTime() - week1.getTime()) / 86400000 - 3 + ((week1.getDay() + 6) % 7)) / 7)
-  );
+/**
+ * Берет текущую дату и возвращает номер недели от 1 сентября
+ * @returns {number}
+ */
+export const getWeekNumber = (newDate?: DateTime): number => {
+  const firstSeptemberDate = DateTime.fromObject({ month: 9, day: 1, year: 2023 });
+
+  // Получаем текущую дату или нужную нам дату
+  const nowDate = newDate ? newDate : DateTime.now();
+
+  // Вычисляем разницу в неделях между нынешней датой и 1 сентября 2023 года
+  const diffInWeeks = nowDate.diff(firstSeptemberDate, 'weeks').weeks;
+
+  return Math.round(diffInWeeks + 1);
 };
 
-export const getWeekNumber = (nowDate: Date) => {
-  const firstSeptemberDate = new Date(2023, 8, 1, 3, 0, 0, 0);
+/**
+ * @param {DateTime=} newDate - Необязательный аргумент, устанавливается нужная дата
+ * Берет последний день недели и возвращает чётность недели
+ * @returns {Parity}
+ */
+export const parityOfWeek = (newDate?: DateTime): Parity => {
+  const nowDate = newDate ? newDate : DateTime.now();
 
-  const newYearDate = new Date('2024-01-01');
-  const numberTheWeek = getWeek(nowDate);
-  const numberTheWeekSeptember = getWeek(firstSeptemberDate);
+  const getLastDayOfWeek = nowDate.endOf('week').day;
 
-  if (nowDate.getTime() >= newYearDate.getTime()) {
-    const lastDayOfYear = new Date('2023-12-31');
-    const numberTheLastDayOfYear = getWeek(lastDayOfYear);
-
-    return numberTheWeek - numberTheLastDayOfYear - numberTheWeekSeptember + 1;
-  } else return numberTheWeek - numberTheWeekSeptember + 1;
+  return Math.floor(getLastDayOfWeek % 2) ? 'numerator' : 'denominator';
 };
-
-export const parityOfWeek = (nowDate: Date): Parity => {
-  var d0 = new Date(nowDate).getTime(),
-    d = new Date(new Date(nowDate).getFullYear(), 0, 1),
-    d1 = d.getTime(),
-    dd = d.getDay(),
-    re = Math.floor((d0 - d1) / 8.64e7) + (dd ? dd - 1 : 6);
-
-  return Math.floor(re / 7) % 2 ? 'numerator' : 'denominator';
-};
-
 
 export const returnCouplesMessage = (couples: Couples) => {
   //@ts-ignore
@@ -62,7 +52,11 @@ export const returnScheduleFromDayOfWeek = (
     );
 };
 
-export const returnScheduleFromWeek = (scheduleJson: Schedule[], parity: Parity, weekNumber: number) => {
+export const returnScheduleFromWeek = (
+  scheduleJson: Schedule[],
+  parity: Parity,
+  weekNumber: number,
+) => {
   return [...scheduleJson].map((value) => {
     return {
       day: value.day,
@@ -73,7 +67,6 @@ export const returnScheduleFromWeek = (scheduleJson: Schedule[], parity: Parity,
     };
   });
 };
-
 
 export const loadJSON = (path: string) => {
   const readFile = fs.readFileSync(new URL(path, import.meta.url)) as unknown as string;
