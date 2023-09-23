@@ -5,17 +5,17 @@ import { config } from 'dotenv';
 config();
 
 import { Telegraf, Markup } from 'telegraf';
+import { DateTime } from 'luxon';
 import {
   getWeekNumber,
   parityOfWeek,
-  numberCouples,
   parityWeek,
   loadJSON,
   returnScheduleFromDayOfWeek,
   returnCouplesMessage,
   returnScheduleFromWeek,
 } from './src/utils.js';
-import { Couples, Parity, Schedule } from './src/types/index.types.js';
+import { Schedule } from './src/types/index.types.js';
 
 const bot = new Telegraf(process.env.BOT_TOKEN as string);
 
@@ -29,17 +29,13 @@ bot.start(async (ctx) => {
   );
 });
 
-const loadJsonAndReturnedAll = (newDate?: Date) => {
+const loadScheduleAndReturnAll = (newDate?: DateTime) => {
   const scheduleJson: Schedule[] = loadJSON('./schedule.json');
 
-  const currentDate = new Date();
-
-  if (newDate) {
-    currentDate.setTime(newDate.getTime());
-  }
+  const currentDate = newDate ? newDate : DateTime.now();
 
   const weekNumber = getWeekNumber(currentDate);
-  const dayOfWeek = currentDate.toLocaleString('ru-RU', { weekday: 'long' });
+  const dayOfWeek = currentDate.toLocaleString({ weekday: 'long' });
   const parity = parityOfWeek(currentDate);
 
   return {
@@ -52,7 +48,7 @@ const loadJsonAndReturnedAll = (newDate?: Date) => {
 };
 
 bot.hears('👁 Schedule', (ctx) => {
-  const { scheduleJson, weekNumber, dayOfWeek, parity } = loadJsonAndReturnedAll();
+  const { scheduleJson, weekNumber, dayOfWeek, parity } = loadScheduleAndReturnAll();
 
   const findedSchedule = returnScheduleFromDayOfWeek(scheduleJson, dayOfWeek, parity, weekNumber);
 
@@ -66,11 +62,9 @@ ${findedSchedule.map((value) => returnCouplesMessage(value)).join('\n\n')}
 });
 
 bot.hears('След.день', (ctx) => {
-  const nextDay = new Date();
-  nextDay.setDate(nextDay.getDate() + 1);
-  nextDay.setHours(nextDay.getHours() + 3);
+  const nextDay = DateTime.now().plus({ day: 1 });
 
-  const { scheduleJson, weekNumber, dayOfWeek, parity } = loadJsonAndReturnedAll(nextDay);
+  const { scheduleJson, weekNumber, dayOfWeek, parity } = loadScheduleAndReturnAll(nextDay);
 
   const findedSchedule = returnScheduleFromDayOfWeek(scheduleJson, dayOfWeek, parity, weekNumber);
 
@@ -84,11 +78,9 @@ ${findedSchedule.map((value) => returnCouplesMessage(value)).join('\n\n')}
 });
 
 bot.hears('След.неделя', (ctx) => {
-  const nextWeek = new Date();
-  nextWeek.setDate(nextWeek.getDate() + 7);
-  nextWeek.setHours(nextWeek.getHours() + 3);
+  const nextWeek = DateTime.now().plus({ week: 1 });
 
-  const { scheduleJson, weekNumber, parity } = loadJsonAndReturnedAll(nextWeek);
+  const { scheduleJson, weekNumber, parity } = loadScheduleAndReturnAll(nextWeek);
 
   const findedSchedule = returnScheduleFromWeek(scheduleJson, parity, weekNumber);
 
@@ -108,7 +100,7 @@ bot.hears('След.неделя', (ctx) => {
 });
 
 bot.hears('Вся неделя', (ctx) => {
-  const { scheduleJson, weekNumber, parity } = loadJsonAndReturnedAll();
+  const { scheduleJson, weekNumber, parity } = loadScheduleAndReturnAll();
 
   const findedSchedule = returnScheduleFromWeek(scheduleJson, parity, weekNumber);
 
