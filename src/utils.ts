@@ -7,7 +7,7 @@ import { Couples, Parity, Schedule } from './types/index.types.js';
  * @returns {number}
  */
 export const getWeekNumber = (newDate?: DateTime): number => {
-  const firstSeptemberDate = DateTime.fromObject({ month: 9, day: 1, year: 2023 });
+  const firstSeptemberDate = DateTime.fromObject({ month: 9, day: 1, year: 2023 }).startOf('week');
 
   // Получаем текущую дату или нужную нам дату
   const nowDate = newDate ? newDate : DateTime.now();
@@ -15,7 +15,7 @@ export const getWeekNumber = (newDate?: DateTime): number => {
   // Вычисляем разницу в неделях между нынешней датой и 1 сентября 2023 года
   const diffInWeeks = nowDate.diff(firstSeptemberDate, 'weeks').weeks;
 
-  return Math.round(diffInWeeks + 1);
+  return Math.floor(diffInWeeks + 1);
 };
 
 /**
