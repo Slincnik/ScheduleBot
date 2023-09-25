@@ -35,7 +35,7 @@ const loadScheduleAndReturnAll = (newDate?: DateTime) => {
   const currentDate = newDate ? newDate : DateTime.now();
 
   const weekNumber = getWeekNumber(currentDate);
-  const dayOfWeek = currentDate.toLocaleString({ weekday: 'long' });
+  const dayOfWeek = currentDate.setLocale('ru-RU').toLocaleString({ weekday: 'long' });
   const parity = parityOfWeek(currentDate);
 
   return {
