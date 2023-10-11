@@ -83,3 +83,5 @@ export const parityWeek = {
   numerator: 'числитель',
   denominator: 'знаменатель',
 };
+
+export const BOT_IS_DEV = "Бот на данный момент находиться в разработке. Скоро верну прод"

@@ -14,6 +14,7 @@ import {
   returnScheduleFromDayOfWeek,
   returnCouplesMessage,
   returnScheduleFromWeek,
+  BOT_IS_DEV,
 } from './src/utils.js';
 import { Schedule } from './src/types/index.types.js';
 
@@ -48,6 +49,8 @@ const loadScheduleAndReturnAll = (newDate?: DateTime) => {
 };
 
 bot.hears('👁 Schedule', (ctx) => {
+  if (process.env.IS_DEV) return ctx.reply(BOT_IS_DEV);
+
   const { scheduleJson, weekNumber, dayOfWeek, parity } = loadScheduleAndReturnAll();
 
   const findedSchedule = returnScheduleFromDayOfWeek(scheduleJson, dayOfWeek, parity, weekNumber);
@@ -62,6 +65,8 @@ ${findedSchedule.map((value) => returnCouplesMessage(value)).join('\n\n')}
 });
 
 bot.hears('След.день', (ctx) => {
+  if (process.env.IS_DEV) return ctx.reply(BOT_IS_DEV);
+
   const nextDay = DateTime.now().plus({ day: 1 });
 
   const { scheduleJson, weekNumber, dayOfWeek, parity } = loadScheduleAndReturnAll(nextDay);
@@ -78,6 +83,8 @@ ${findedSchedule.map((value) => returnCouplesMessage(value)).join('\n\n')}
 });
 
 bot.hears('След.неделя', (ctx) => {
+  if (process.env.IS_DEV) return ctx.reply(BOT_IS_DEV);
+
   const nextWeek = DateTime.now().plus({ week: 1 });
 
   const { scheduleJson, weekNumber, parity } = loadScheduleAndReturnAll(nextWeek);
@@ -99,7 +106,9 @@ bot.hears('След.неделя', (ctx) => {
   );
 });
 
-bot.hears('Вся неделя', (ctx) => {
+bot.hears('Вся неделя', (ctx) => {  
+  if (process.env.IS_DEV) return ctx.reply(BOT_IS_DEV);
+
   const { scheduleJson, weekNumber, parity } = loadScheduleAndReturnAll();
 
   const findedSchedule = returnScheduleFromWeek(scheduleJson, parity, weekNumber);
