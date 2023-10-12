@@ -12,4 +12,8 @@ export type Couples = {
   weekNumbers?: number[];
 };
 
+export type Subscription = {
+  userId: number;
+};
+
 export type Parity = 'numerator' | 'denominator';

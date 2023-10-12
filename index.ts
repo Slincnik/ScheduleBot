@@ -6,6 +6,7 @@ config();
 
 import { Telegraf, Markup } from 'telegraf';
 import { DateTime } from 'luxon';
+import { CronJob } from 'cron';
 import {
   getWeekNumber,
   parityOfWeek,
@@ -14,10 +15,25 @@ import {
   returnScheduleFromDayOfWeek,
   returnCouplesMessage,
   returnScheduleFromWeek,
+  BOT_IS_DEV,
 } from './src/utils.js';
 import { Schedule } from './src/types/index.types.js';
+import {
+  disableUserSub,
+  enableUserSub,
+  initialDatabase,
+  returnAllSubs,
+  returnUserSub,
+} from './src/subs.js';
 
 const bot = new Telegraf(process.env.BOT_TOKEN as string);
+
+bot.telegram.setMyCommands([
+  {
+    command: 'subscription',
+    description: 'Управление подпиской расписаний',
+  },
+]);
 
 bot.start(async (ctx) => {
   await ctx.reply(
@@ -47,7 +63,21 @@ const loadScheduleAndReturnAll = (newDate?: DateTime) => {
   };
 };
 
+bot.command('subscription', async (ctx) => {
+  const subscription = await returnUserSub(ctx.message.from.id);
+  return ctx.reply(
+    `Ваша подписка ${subscription ? 'активна' : 'неактивна'}`,
+    Markup.inlineKeyboard([
+      Markup.button.callback('Подписаться', 'sub_on'),
+      Markup.button.callback('Отписаться', 'sub_off'),
+    ]),
+  );
+});
+
 bot.hears('👁 Schedule', (ctx) => {
+  if (process.env.IS_DEV && ctx.message.from.id !== Number(process.env.ADMIN_ID))
+    return ctx.reply(BOT_IS_DEV);
+
   const { scheduleJson, weekNumber, dayOfWeek, parity } = loadScheduleAndReturnAll();
 
   const findedSchedule = returnScheduleFromDayOfWeek(scheduleJson, dayOfWeek, parity, weekNumber);
@@ -62,6 +92,9 @@ ${findedSchedule.map((value) => returnCouplesMessage(value)).join('\n\n')}
 });
 
 bot.hears('След.день', (ctx) => {
+  if (process.env.IS_DEV && ctx.message.from.id !== Number(process.env.ADMIN_ID))
+    return ctx.reply(BOT_IS_DEV);
+
   const nextDay = DateTime.now().plus({ day: 1 });
 
   const { scheduleJson, weekNumber, dayOfWeek, parity } = loadScheduleAndReturnAll(nextDay);
@@ -78,6 +111,9 @@ ${findedSchedule.map((value) => returnCouplesMessage(value)).join('\n\n')}
 });
 
 bot.hears('След.неделя', (ctx) => {
+  if (process.env.IS_DEV && ctx.message.from.id !== Number(process.env.ADMIN_ID))
+    return ctx.reply(BOT_IS_DEV);
+
   const nextWeek = DateTime.now().plus({ week: 1 });
 
   const { scheduleJson, weekNumber, parity } = loadScheduleAndReturnAll(nextWeek);
@@ -100,6 +136,9 @@ bot.hears('След.неделя', (ctx) => {
 });
 
 bot.hears('Вся неделя', (ctx) => {
+  if (process.env.IS_DEV && ctx.message.from.id !== Number(process.env.ADMIN_ID))
+    return ctx.reply(BOT_IS_DEV);
+
   const { scheduleJson, weekNumber, parity } = loadScheduleAndReturnAll();
 
   const findedSchedule = returnScheduleFromWeek(scheduleJson, parity, weekNumber);
@@ -119,8 +158,53 @@ bot.hears('Вся неделя', (ctx) => {
   );
 });
 
+bot.action('sub_on', async (ctx) => {
+  const result = await enableUserSub(ctx.from!.id);
+  await ctx.deleteMessage();
+  if (!result) {
+    await ctx.sendMessage('У вас уже есть подписка');
+    return;
+  }
+  await ctx.sendMessage('Вы подписались на рассылку расписания');
+});
+
+bot.action('sub_off', async (ctx) => {
+  const result = await disableUserSub(ctx.from!.id);
+  await ctx.deleteMessage();
+  if (!result) {
+    await ctx.sendMessage('У вас нету подписки');
+    return;
+  }
+  await ctx.sendMessage('Вы отписались от рассылки расписания');
+});
+
 bot.launch();
 
+new CronJob(
+  '0 7 * * 1-5 *',
+  async () => {
+    const result = await returnAllSubs();
+    const { scheduleJson, weekNumber, dayOfWeek, parity } = loadScheduleAndReturnAll();
+
+    const findedSchedule = returnScheduleFromDayOfWeek(scheduleJson, dayOfWeek, parity, weekNumber);
+
+    result.map(({ userId }) => {
+      if (!findedSchedule?.length) {
+        return bot.telegram.sendMessage(userId, 'Сегодня занятий нету');
+      }
+      return bot.telegram.sendMessage(
+        userId,
+        `🔷🔷 ${dayOfWeek} (${parityWeek[parity]}) 🔷🔷\n` +
+          findedSchedule.map((value) => returnCouplesMessage(value)).join('\n\n'),
+      );
+    });
+  },
+  null,
+  true,
+  'Europe/Moscow',
+);
+
+initialDatabase();
 // Enable graceful stop
 process.once('SIGINT', () => bot.stop('SIGINT'));
 process.once('SIGTERM', () => bot.stop('SIGTERM'));

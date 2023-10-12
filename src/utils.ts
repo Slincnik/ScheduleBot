@@ -19,7 +19,7 @@ export const getWeekNumber = (newDate?: DateTime): number => {
 };
 
 /**
- * @param {DateTime=} newDate - Необязательный аргумент, устанавливается нужная дата
+ * @param {DateTime=} newDate - Необязательный аргумент, устанавливается нужная дата.
  * Берет последний день недели и возвращает чётность недели
  * @returns {Parity}
  */
@@ -83,3 +83,5 @@ export const parityWeek = {
   numerator: 'числитель',
   denominator: 'знаменатель',
 };
+
+export const BOT_IS_DEV = "Бот на данный момент находиться в разработке. Скоро верну прод"
