@@ -75,7 +75,7 @@ bot.command('subscription', async (ctx) => {
 });
 
 bot.hears('👁 Schedule', (ctx) => {
-  if (process.env.IS_DEV && ctx.message.from.id !== Number(process.env.ADMIN_ID))
+  if (Boolean(process.env.IS_DEV) && ctx.message.from.id !== Number(process.env.ADMIN_ID))
     return ctx.reply(BOT_IS_DEV);
 
   const { scheduleJson, weekNumber, dayOfWeek, parity } = loadScheduleAndReturnAll();
@@ -92,7 +92,7 @@ ${findedSchedule.map((value) => returnCouplesMessage(value)).join('\n\n')}
 });
 
 bot.hears('След.день', (ctx) => {
-  if (process.env.IS_DEV && ctx.message.from.id !== Number(process.env.ADMIN_ID))
+  if (Boolean(process.env.IS_DEV) && ctx.message.from.id !== Number(process.env.ADMIN_ID))
     return ctx.reply(BOT_IS_DEV);
 
   const nextDay = DateTime.now().plus({ day: 1 });
@@ -111,7 +111,7 @@ ${findedSchedule.map((value) => returnCouplesMessage(value)).join('\n\n')}
 });
 
 bot.hears('След.неделя', (ctx) => {
-  if (process.env.IS_DEV && ctx.message.from.id !== Number(process.env.ADMIN_ID))
+  if (Boolean(process.env.IS_DEV) && ctx.message.from.id !== Number(process.env.ADMIN_ID))
     return ctx.reply(BOT_IS_DEV);
 
   const nextWeek = DateTime.now().plus({ week: 1 });
@@ -136,7 +136,7 @@ bot.hears('След.неделя', (ctx) => {
 });
 
 bot.hears('Вся неделя', (ctx) => {
-  if (process.env.IS_DEV && ctx.message.from.id !== Number(process.env.ADMIN_ID))
+  if (Boolean(process.env.IS_DEV) && ctx.message.from.id !== Number(process.env.ADMIN_ID))
     return ctx.reply(BOT_IS_DEV);
 
   const { scheduleJson, weekNumber, parity } = loadScheduleAndReturnAll();
