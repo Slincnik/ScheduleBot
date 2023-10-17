@@ -181,7 +181,7 @@ bot.action('sub_off', async (ctx) => {
 bot.launch();
 
 new CronJob(
-  '0 7 * * 1-5 *',
+  '0 7 * * 1-5',
   async () => {
     const result = await returnAllSubs();
     const { scheduleJson, weekNumber, dayOfWeek, parity } = loadScheduleAndReturnAll();
