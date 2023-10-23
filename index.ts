@@ -181,16 +181,19 @@ bot.action('sub_off', async (ctx) => {
 bot.launch();
 
 new CronJob(
-  '0 7 * * 1-5',
+  '0 22 * * 0-4',
   async () => {
     const result = await returnAllSubs();
-    const { scheduleJson, weekNumber, dayOfWeek, parity } = loadScheduleAndReturnAll();
+
+    const nextDay = DateTime.now().plus({ day: 1 });
+
+    const { scheduleJson, weekNumber, dayOfWeek, parity } = loadScheduleAndReturnAll(nextDay);
 
     const findedSchedule = returnScheduleFromDayOfWeek(scheduleJson, dayOfWeek, parity, weekNumber);
 
     result.map(({ userId }) => {
       if (!findedSchedule?.length) {
-        return bot.telegram.sendMessage(userId, 'Сегодня занятий нету');
+        return bot.telegram.sendMessage(userId, 'Завтра занятий нету');
       }
       return bot.telegram.sendMessage(
         userId,
