@@ -23,12 +23,10 @@ export const getWeekNumber = (newDate?: DateTime): number => {
  * Берет последний день недели и возвращает чётность недели
  * @returns {Parity}
  */
-export const parityOfWeek = (newDate?: DateTime): Parity => {
-  const nowDate = newDate ? newDate : DateTime.now();
+export const parityOfWeek = (newDate: DateTime | undefined = DateTime.now()): Parity => {
+  const weekNumber = newDate.weekNumber;
 
-  const getLastDayOfWeek = nowDate.endOf('week').day;
-
-  return Math.floor(getLastDayOfWeek % 2) ? 'numerator' : 'denominator';
+  return weekNumber % 2 ? 'numerator' : 'denominator';
 };
 
 export const returnCouplesMessage = (couples: Couples) => {
