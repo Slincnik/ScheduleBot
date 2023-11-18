@@ -1,6 +1,6 @@
 import fs from 'fs';
 import { DateTime } from 'luxon';
-import { Couples, Parity, Schedule } from './types/index.types.js';
+import { Couples, Parity, Schedule } from '../types/index.types.js';
 
 /**
  * Берет текущую дату и возвращает номер недели от 1 сентября
@@ -71,6 +71,24 @@ export const loadJSON = (path: string) => {
   return JSON.parse(readFile);
 };
 
+export const loadScheduleAndReturnAll = (newDate?: DateTime) => {
+  const scheduleJson: Schedule[] = loadJSON('./schedule.json');
+
+  const currentDate = newDate ? newDate : DateTime.now();
+
+  const weekNumber = getWeekNumber(currentDate);
+  const dayOfWeek = currentDate.setLocale('ru-RU').toLocaleString({ weekday: 'long' });
+  const parity = parityOfWeek(currentDate);
+
+  return {
+    scheduleJson,
+    currentDate,
+    weekNumber,
+    dayOfWeek,
+    parity,
+  };
+};
+
 export const numberCouples = {
   '15:15-16:50': '5-я',
   '17:00-18:30': '6-я',
@@ -82,4 +100,4 @@ export const parityWeek = {
   denominator: 'знаменатель',
 };
 
-export const BOT_IS_DEV = "Бот на данный момент находиться в разработке. Скоро верну прод"
+export const BOT_IS_DEV = 'Бот на данный момент находиться в разработке. Скоро верну прод';
