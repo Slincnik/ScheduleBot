@@ -1,6 +1,6 @@
 import sqlite3 from 'sqlite3';
 import { open } from 'sqlite';
-import { Subscription } from './types/index.types.js';
+import { Subscription } from '../types/index.types.js';
 sqlite3.verbose();
 
 export const openDb = async () => {
