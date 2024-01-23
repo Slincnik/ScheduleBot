@@ -91,8 +91,8 @@ export const loadScheduleAndReturnAll = (newDate?: DateTime) => {
 
 export const numberCouples = {
   '15:15-16:50': '5-я',
-  '17:00-18:30': '6-я',
-  '18:45-20:15': '7-я',
+  '17:00-18:35': '6-я',
+  '18:40-20:05': '7-я',
 };
 
 export const parityWeek = {
