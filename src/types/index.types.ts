@@ -8,7 +8,8 @@ export type Couples = {
   auditory: string;
   teacher: string;
   time: string;
-  parity: Parity;
+  subgroup: boolean;
+  parity: ScheduleParity;
   weekNumbers?: number[];
 };
 
@@ -17,3 +18,5 @@ export type Subscription = {
 };
 
 export type Parity = 'numerator' | 'denominator';
+
+export type ScheduleParity = ['numerator' | 'denominator'];

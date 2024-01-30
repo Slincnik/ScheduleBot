@@ -71,7 +71,7 @@ new CronJob(
       return bot.telegram.sendMessage(
         userId,
         `🔷🔷 ${dayOfWeek} (${parityWeek[parity]}) 🔷🔷\n` +
-          findedSchedule.map((value) => returnCouplesMessage(value)).join('\n\n'),
+          findedSchedule.map((value) => returnCouplesMessage(value, parity)).join('\n\n'),
       );
     });
   },
