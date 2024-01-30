@@ -22,7 +22,7 @@ export default new CommandHandler({
           }
           return (
             `🔷🔷 ${value.day} 🔷🔷\n` +
-            value.couples.map((value) => returnCouplesMessage(value)).join('\n\n')
+            value.couples.map((value) => returnCouplesMessage(value, parity)).join('\n\n')
           );
         })
         .join('\n\n')}`,

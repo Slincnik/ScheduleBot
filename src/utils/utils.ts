@@ -29,11 +29,11 @@ export const parityOfWeek = (newDate: DateTime | undefined = DateTime.now()): Pa
   return weekNumber % 2 ? 'numerator' : 'denominator';
 };
 
-export const returnCouplesMessage = (couples: Couples) => {
+export const returnCouplesMessage = (couples: Couples, parity: Parity) => {
   //@ts-ignore
-  return `${numberCouples[couples.time]} пара (${couples.time}) \n${couples.name} [${
-    couples.teacher
-  }] [${couples.auditory}]`;
+  return `${numberCouples[couples.time]} пара (${couples.time}) ${
+    couples.subgroup ? `(${subgroupParityWeek[parity]})` : ''
+  } \n${couples.name} [${couples.teacher}] [${couples.auditory}]`;
 };
 
 export const returnScheduleFromDayOfWeek = (
@@ -46,7 +46,7 @@ export const returnScheduleFromDayOfWeek = (
     .find(({ day }) => day === dayOfWeek)
     ?.couples?.filter(
       ({ parity: coupleParity, weekNumbers }) =>
-        coupleParity === parity && (!weekNumbers || weekNumbers.includes(weekNumber)),
+        coupleParity.includes(parity) && (!weekNumbers || weekNumbers.includes(weekNumber)),
     );
 };
 
@@ -60,7 +60,7 @@ export const returnScheduleFromWeek = (
       day: value.day,
       couples: value.couples.filter(
         ({ parity: couplesParity, weekNumbers }) =>
-          couplesParity === parity && (!weekNumbers || weekNumbers.includes(weekNumber)),
+          couplesParity.includes(parity) && (!weekNumbers || weekNumbers.includes(weekNumber)),
       ),
     };
   });
@@ -98,6 +98,11 @@ export const numberCouples = {
 export const parityWeek = {
   numerator: 'числитель',
   denominator: 'знаменатель',
+};
+
+export const subgroupParityWeek = {
+  numerator: '1 п/г',
+  denominator: '2 п/г',
 };
 
 export const BOT_IS_DEV = 'Бот на данный момент находиться в разработке. Скоро верну прод';

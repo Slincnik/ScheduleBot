@@ -3,32 +3,44 @@
         "day": "понедельник",
         "couples": [
             {
-                "name": "Front-end разработка (лек) (все подгруппы)",
+                "name": "Front-end разработка (лек)",
                 "auditory": "дистант",
+                "subgroup": false,
                 "teacher": "Рындин Н.А",
                 "time": "15:15-16:50",
-                "parity": "numerator"
+                "parity": [
+                    "numerator"
+                ]
             },
             {
-                "name": "Проектная деятельность (практика) (все подгруппы)",
+                "name": "Проектная деятельность (практика)",
                 "auditory": "дистант",
+                "subgroup": false,
                 "teacher": "Рындин Н.А",
                 "time": "17:00-18:35",
-                "parity": "numerator"
+                "parity": [
+                    "numerator"
+                ]
             },
             {
-                "name": "Инфраструктурные компоненты информационных систем  (лек) (все подгруппы)",
+                "name": "Инфраструктурные компоненты информационных систем (лек)",
                 "auditory": "дистант",
+                "subgroup": false,
                 "teacher": "Рындин Н.А",
                 "time": "15:15-16:50",
-                "parity": "denominator"
+                "parity": [
+                    "denominator"
+                ]
             },
             {
-                "name": "NoSQL системы управления базами данных  (лек) (все подгруппы)",
+                "name": "NoSQL системы управления базами данных (лек)",
                 "auditory": "дистант",
+                "subgroup": false,
                 "teacher": "Рындин Н.А",
                 "time": "17:00-18:35",
-                "parity": "denominator"
+                "parity": [
+                    "denominator"
+                ]
             }
         ]
     },
@@ -40,32 +52,26 @@
         "day": "среда",
         "couples": [
             {
-                "name": "Front-end разработка (лек) (1 п/г)",
+                "name": "Front-end разработка (лек)",
                 "auditory": "дистант",
+                "subgroup": true,
                 "teacher": "Рындин Н.А",
                 "time": "17:00-18:35",
-                "parity": "numerator"
+                "parity": [
+                    "numerator",
+                    "denominator"
+                ]
             },
             {
-                "name": "Front-end разработка (лек) (1 п/г)",
+                "name": "Front-end разработка (лек)",
                 "auditory": "дистант",
+                "subgroup": true,
                 "teacher": "Рындин Н.А",
                 "time": "18:40-20:05",
-                "parity": "numerator"
-            },
-            {
-                "name": "Front-end разработка (лек) (2 п/г)",
-                "auditory": "дистант",
-                "teacher": "Рындин Н.А",
-                "time": "17:00-18:35",
-                "parity": "denominator"
-            },
-            {
-                "name": "Front-end разработка (лек) (2 п/г)",
-                "auditory": "дистант",
-                "teacher": "Рындин Н.А",
-                "time": "18:40-20:05",
-                "parity": "denominator"
+                "parity": [
+                    "numerator",
+                    "denominator"
+                ]
             }
         ]
     },
@@ -77,21 +83,29 @@
                 "auditory": "301/2",
                 "teacher": "Королев Е.Н",
                 "time": "17:00-18:35",
-                "parity": "numerator"
+                "parity": [
+                    "numerator"
+                ]
             },
             {
                 "name": "Системная инженерия (лаб) (1 п/г)",
                 "auditory": "403/2",
+                "subgroup": false,
                 "teacher": "Королев Е.Н",
                 "time": "17:00-18:35",
-                "parity": "denominator"
+                "parity": [
+                    "denominator"
+                ]
             },
             {
                 "name": "Системная инженерия (лаб) (2 п/г)",
                 "auditory": "403/2",
+                "subgroup": false,
                 "teacher": "Королев Е.Н",
                 "time": "18:40-20:05",
-                "parity": "numerator"
+                "parity": [
+                    "numerator"
+                ]
             }
         ]
     },
@@ -99,46 +113,37 @@
         "day": "пятница",
         "couples": [
             {
-                "name": "Инфраструктурные компоненты информационных систем (лабы) (1 п/г)",
+                "name": "Инфраструктурные компоненты информационных систем (лабы)",
                 "auditory": "дистант",
+                "subgroup": true,
                 "teacher": "Рындин Н.А",
                 "time": "15:15-16:50",
-                "parity": "numerator"
+                "parity": [
+                    "numerator",
+                    "denominator"
+                ]
             },
             {
-                "name": "NoSQL системы управления базами данных (лабы) (1 п/г)",
+                "name": "NoSQL системы управления базами данных (лабы)",
                 "auditory": "дистант",
+                "subgroup": true,
                 "teacher": "Рындин Н.А",
                 "time": "17:00-18:35",
-                "parity": "numerator"
+                "parity": [
+                    "numerator",
+                    "denominator"
+                ]
             },
             {
-                "name": "NoSQL системы управления базами данных (лабы) (1 п/г)",
+                "name": "NoSQL системы управления базами данных (лабы)",
                 "auditory": "дистант",
+                "subgroup": true,
                 "teacher": "Рындин Н.А",
                 "time": "18:40-20:05",
-                "parity": "numerator"
-            },
-            {
-                "name": "Инфраструктурные компоненты информационных систем (лабы) (2 п/г)",
-                "auditory": "дистант",
-                "teacher": "Рындин Н.А",
-                "time": "15:15-16:50",
-                "parity": "denominator"
-            },
-            {
-                "name": "NoSQL системы управления базами данных (лабы) (2 п/г)",
-                "auditory": "дистант",
-                "teacher": "Рындин Н.А",
-                "time": "17:00-18:35",
-                "parity": "denominator"
-            },
-            {
-                "name": "NoSQL системы управления базами данных (лабы) (2 п/г)",
-                "auditory": "дистант",
-                "teacher": "Рындин Н.А",
-                "time": "18:40-20:05",
-                "parity": "denominator"
+                "parity": [
+                    "numerator",
+                    "denominator"
+                ]
             }
         ]
     }
