@@ -1,12 +1,12 @@
 import { Markup } from 'telegraf';
 import { CommandHandler } from '../structures/command.js';
-import { disableUserSub, enableUserSub, returnUserSub } from '../utils/subs.js';
-import { bot } from '../index.js';
+import { disableUserSubscription, enableUserSubscription, getUserSubscription } from '../utils/subs.js';
+import { client } from '../index.js';
 
 export default new CommandHandler({
   name: 'subscription',
   async execute(ctx) {
-    const subscription = await returnUserSub(ctx.message.from.id);
+    const subscription = getUserSubscription(ctx.message.from.id);
 
     return ctx.reply(
       `Ваша подписка ${subscription ? 'активна' : 'неактивна'}`,
@@ -18,8 +18,8 @@ export default new CommandHandler({
   },
 });
 
-bot.action('sub_on', async (ctx) => {
-  const result = await enableUserSub(ctx.from!.id);
+client.action('sub_on', async (ctx) => {
+  const result = enableUserSubscription(ctx.from!.id);
   await ctx.deleteMessage();
   if (!result) {
     await ctx.sendMessage('У вас уже есть подписка');
@@ -28,8 +28,8 @@ bot.action('sub_on', async (ctx) => {
   await ctx.sendMessage('Вы подписались на рассылку расписания');
 });
 
-bot.action('sub_off', async (ctx) => {
-  const result = await disableUserSub(ctx.from!.id);
+client.action('sub_off', async (ctx) => {
+  const result = disableUserSubscription(ctx.from!.id);
   await ctx.deleteMessage();
   if (!result) {
     await ctx.sendMessage('У вас нету подписки');

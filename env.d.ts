@@ -4,6 +4,7 @@ declare global {
       BOT_TOKEN: string;
       IS_DEV: string;
       ADMIN_ID: number;
+      DATABASE_PATH: string;
       NODE_ENV: 'development' | 'production';
       PORT?: string;
       PWD: string;
