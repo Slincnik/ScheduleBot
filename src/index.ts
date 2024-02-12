@@ -1,33 +1,30 @@
 'use strict';
 
-import { config } from 'dotenv';
 import { Markup } from 'telegraf';
+
+import Client from './structures/client.js';
 import { CronJob } from 'cron';
 import { DateTime } from 'luxon';
-
-import { ExtendedTelegrafClient } from './structures/client.js';
-import { returnAllSubs } from './utils/subs.js';
 import {
-  BOT_IS_DEV,
   loadScheduleAndReturnAll,
   parityWeek,
   returnCouplesMessage,
   returnScheduleFromDayOfWeek,
 } from './utils/utils.js';
+import { getAllUsersSubscriptions } from './utils/subs.js';
 
-config();
+const { BOT_TOKEN } = process.env;
 
-const { BOT_TOKEN, IS_DEV } = process.env;
 
 if (!BOT_TOKEN || !BOT_TOKEN.length) {
   throw new TypeError('Missing BOT_TOKEN variables');
 }
 
-export const bot = new ExtendedTelegrafClient(BOT_TOKEN);
+export const client = new Client(BOT_TOKEN);
 
-bot.startBot();
+client.init();
 
-bot.start(async (ctx) => {
+client.start(async (ctx) => {
   await ctx.reply(
     'Привет',
     Markup.keyboard([
@@ -37,16 +34,7 @@ bot.start(async (ctx) => {
   );
 });
 
-bot.use(async (ctx, next) => {
-  if (IS_DEV === 'true' && ctx.message!.from.id !== Number(process.env.ADMIN_ID)) {
-    ctx.reply(BOT_IS_DEV);
-    await next();
-  }
-
-  await next();
-});
-
-bot.telegram.setMyCommands([
+client.telegram.setMyCommands([
   {
     command: 'subscription',
     description: 'Управление подпиской расписаний',
@@ -56,7 +44,7 @@ bot.telegram.setMyCommands([
 new CronJob(
   '0 22 * * 0-4',
   async () => {
-    const result = await returnAllSubs();
+    const result = getAllUsersSubscriptions();
 
     const nextDay = DateTime.now().plus({ day: 1 });
 
@@ -64,11 +52,11 @@ new CronJob(
 
     const findedSchedule = returnScheduleFromDayOfWeek(scheduleJson, dayOfWeek, parity, weekNumber);
 
-    result.map(({ userId }) => {
+    result.map((userId) => {
       if (!findedSchedule?.length) {
-        return bot.telegram.sendMessage(userId, 'Завтра занятий нету');
+        return client.telegram.sendMessage(userId, 'Завтра занятий нету');
       }
-      return bot.telegram.sendMessage(
+      return client.telegram.sendMessage(
         userId,
         `🔷🔷 ${dayOfWeek} (${parityWeek[parity]}) 🔷🔷\n` +
           findedSchedule.map((value) => returnCouplesMessage(value, parity)).join('\n\n'),
@@ -81,5 +69,5 @@ new CronJob(
 );
 
 // Enable graceful stop
-process.once('SIGINT', () => bot.stop('SIGINT'));
-process.once('SIGTERM', () => bot.stop('SIGTERM'));
+process.once('SIGINT', () => client.stop('SIGINT'));
+process.once('SIGTERM', () => client.stop('SIGTERM'));
