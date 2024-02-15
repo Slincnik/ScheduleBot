@@ -15,7 +15,6 @@ import { getAllUsersSubscriptions } from './utils/subs.js';
 
 const { BOT_TOKEN } = process.env;
 
-
 if (!BOT_TOKEN || !BOT_TOKEN.length) {
   throw new TypeError('Missing BOT_TOKEN variables');
 }
@@ -44,24 +43,33 @@ client.telegram.setMyCommands([
 new CronJob(
   '0 22 * * 0-4',
   async () => {
-    const result = getAllUsersSubscriptions();
+    try {
+      const result = getAllUsersSubscriptions();
 
-    const nextDay = DateTime.now().plus({ day: 1 });
+      const nextDay = DateTime.now().plus({ day: 1 });
 
-    const { scheduleJson, weekNumber, dayOfWeek, parity } = loadScheduleAndReturnAll(nextDay);
+      const { scheduleJson, weekNumber, dayOfWeek, parity } = loadScheduleAndReturnAll(nextDay);
 
-    const findedSchedule = returnScheduleFromDayOfWeek(scheduleJson, dayOfWeek, parity, weekNumber);
-
-    result.map((userId) => {
-      if (!findedSchedule?.length) {
-        return client.telegram.sendMessage(userId, 'Завтра занятий нету');
-      }
-      return client.telegram.sendMessage(
-        userId,
-        `🔷🔷 ${dayOfWeek} (${parityWeek[parity]}) 🔷🔷\n` +
-          findedSchedule.map((value) => returnCouplesMessage(value, parity)).join('\n\n'),
+      const findedSchedule = returnScheduleFromDayOfWeek(
+        scheduleJson,
+        dayOfWeek,
+        parity,
+        weekNumber,
       );
-    });
+
+      result.map((userId) => {
+        if (!findedSchedule?.length) {
+          return client.telegram.sendMessage(userId, 'Завтра занятий нету');
+        }
+        return client.telegram.sendMessage(
+          userId,
+          `🔷🔷 ${dayOfWeek} (${parityWeek[parity]}) 🔷🔷\n` +
+            findedSchedule.map((value) => returnCouplesMessage(value, parity)).join('\n\n'),
+        );
+      });
+    } catch (error) {
+      console.error('Не смог отправить сообщение', error);
+    }
   },
   null,
   true,
