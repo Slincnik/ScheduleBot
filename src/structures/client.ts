@@ -20,6 +20,7 @@ export const db = JSONFileSyncPreset<{
 
 export default class ExtendedClient extends Telegraf<Context> {
   public hearsCommands: Map<string, CommandType> = new Map();
+
   public commands: Map<string, CommandType> = new Map();
 
   constructor(token: string, options?: Partial<Telegraf.Options<Context>>) {
@@ -36,16 +37,18 @@ export default class ExtendedClient extends Telegraf<Context> {
   }
 
   async init() {
-    console.log(`Бот запущен`);
+    console.log('Бот запущен');
     await this.registerModules();
     await this.launch();
   }
 
+  // eslint-disable-next-line class-methods-use-this
   async importFile(filePath: string) {
     return (await import(`file://${filePath}`))?.default;
   }
 
   async registerModules() {
+    // eslint-disable-next-line no-underscore-dangle
     const __dirname = dirname(new URL(import.meta.url).pathname);
     // Hears Handler
     const hearsFiles = await glob(`${__dirname}/../hearCommands/*{.ts,.js}`);

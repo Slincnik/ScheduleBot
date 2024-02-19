@@ -6,19 +6,19 @@ type ExecuteContext = Context<{
   update_id: number;
 }>;
 
-type ExecuteReturn = Promise<void | Message.TextMessage | undefined>;
+type ExecuteReturn = Promise<void | Message.TextMessage>;
 
 type ExecuteFunction = (ctx: ExecuteContext) => ExecuteReturn;
-
-export type ImportCommand = {
-  options: CommandType;
-  executeCommand: ExecuteFunction
-};
 
 export type CommandType = {
   name: string;
   isDev?: boolean;
   execute: ExecuteFunction;
+};
+
+export type ImportCommand = {
+  options: CommandType;
+  executeCommand: ExecuteFunction;
 };
 
 export class CommandHandler {
@@ -33,6 +33,8 @@ export class CommandHandler {
       return ctx.reply('Данная команда предназначена только для разработчиков!');
     }
 
-    await this.options.execute(ctx);
+    const result = await this.options.execute(ctx);
+
+    return result;
   }
 }

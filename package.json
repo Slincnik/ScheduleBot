@@ -9,7 +9,8 @@
     "build": "tsc --build",
     "dev": "tsx src/index.ts",
     "lint": "eslint ./src --ext .ts",
-    "lint:fix": "eslint ./src --ext .ts --fix --color"
+    "lint:fix": "eslint ./src --ext .ts --fix --color",
+    "prepare": "husky"
   },
   "author": "Slincnik",
   "license": "ISC",

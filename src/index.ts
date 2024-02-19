@@ -1,10 +1,8 @@
-'use strict';
-
 import { Markup } from 'telegraf';
-
-import Client from './structures/client.js';
 import { CronJob } from 'cron';
 import { DateTime } from 'luxon';
+import Client from './structures/client.js';
+
 import {
   returnAllSchedule,
   parityWeek,
@@ -64,10 +62,10 @@ new CronJob(
         }
         await client.telegram.sendMessage(
           userId,
-          `🔷🔷 ${dayOfWeek} (${parityWeek[parity]}) 🔷🔷\n` +
-            findedSchedule.map((value) => returnCouplesMessage(value, parity)).join('\n\n'),
+          `🔷🔷 ${dayOfWeek} (${parityWeek[parity]}) 🔷🔷\n${findedSchedule
+            .map((value) => returnCouplesMessage(value, parity))
+            .join('\n\n')}`,
         );
-        return;
       });
     } catch (error) {
       console.error('Не смог отправить сообщение', error);
