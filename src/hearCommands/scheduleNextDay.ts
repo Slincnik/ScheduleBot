@@ -1,7 +1,7 @@
 import { DateTime } from 'luxon';
 import { CommandHandler } from '../structures/command.js';
 import {
-  loadScheduleAndReturnAll,
+  returnAllSchedule,
   parityWeek,
   returnCouplesMessage,
   returnScheduleFromDayOfWeek,
@@ -12,7 +12,7 @@ export default new CommandHandler({
   async execute(ctx) {
     const nextDay = DateTime.now().plus({ day: 1 });
 
-    const { scheduleJson, weekNumber, dayOfWeek, parity } = loadScheduleAndReturnAll(nextDay);
+    const { scheduleJson, weekNumber, dayOfWeek, parity } = returnAllSchedule(nextDay);
 
     const findedSchedule = returnScheduleFromDayOfWeek(scheduleJson, dayOfWeek, parity, weekNumber);
 

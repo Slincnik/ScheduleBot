@@ -71,7 +71,7 @@ export const loadJSON = (path: string) => {
   return JSON.parse(readFile);
 };
 
-export const loadScheduleAndReturnAll = (newDate?: DateTime) => {
+export const returnAllSchedule = (newDate?: DateTime) => {
   const scheduleJson: Schedule[] = loadJSON('./schedule.json');
 
   const currentDate = newDate ? newDate : DateTime.now();

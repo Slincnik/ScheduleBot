@@ -1,6 +1,6 @@
 import { CommandHandler } from '../structures/command.js';
 import {
-  loadScheduleAndReturnAll,
+  returnAllSchedule,
   parityWeek,
   returnCouplesMessage,
   returnScheduleFromDayOfWeek,
@@ -9,7 +9,7 @@ import {
 export default new CommandHandler({
   name: '👁 Schedule',
   async execute(ctx) {
-    const { scheduleJson, weekNumber, dayOfWeek, parity } = loadScheduleAndReturnAll();
+    const { scheduleJson, weekNumber, dayOfWeek, parity } = returnAllSchedule();
 
     const findedSchedule = returnScheduleFromDayOfWeek(scheduleJson, dayOfWeek, parity, weekNumber);
 

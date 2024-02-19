@@ -6,7 +6,7 @@ import Client from './structures/client.js';
 import { CronJob } from 'cron';
 import { DateTime } from 'luxon';
 import {
-  loadScheduleAndReturnAll,
+  returnAllSchedule,
   parityWeek,
   returnCouplesMessage,
   returnScheduleFromDayOfWeek,
@@ -48,7 +48,7 @@ new CronJob(
 
       const nextDay = DateTime.now().plus({ day: 1 });
 
-      const { scheduleJson, weekNumber, dayOfWeek, parity } = loadScheduleAndReturnAll(nextDay);
+      const { scheduleJson, weekNumber, dayOfWeek, parity } = returnAllSchedule(nextDay);
 
       const findedSchedule = returnScheduleFromDayOfWeek(
         scheduleJson,
