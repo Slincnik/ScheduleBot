@@ -57,15 +57,17 @@ new CronJob(
         weekNumber,
       );
 
-      result.map((userId) => {
+      result.forEach(async (userId) => {
         if (!findedSchedule?.length) {
-          return client.telegram.sendMessage(userId, 'Завтра занятий нету');
+          await client.telegram.sendMessage(userId, 'Завтра занятий нету');
+          return;
         }
-        return client.telegram.sendMessage(
+        await client.telegram.sendMessage(
           userId,
           `🔷🔷 ${dayOfWeek} (${parityWeek[parity]}) 🔷🔷\n` +
             findedSchedule.map((value) => returnCouplesMessage(value, parity)).join('\n\n'),
         );
+        return;
       });
     } catch (error) {
       console.error('Не смог отправить сообщение', error);
