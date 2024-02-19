@@ -17,8 +17,8 @@ export default new CommandHandler({
       return ctx.reply('Сегодня занятий нету');
     }
 
-    ctx.reply(`🔷🔷 ${dayOfWeek} (${parityWeek[parity]}) 🔷🔷
-  ${findedSchedule.map((value) => returnCouplesMessage(value, parity)).join('\n\n')}
+    return ctx.reply(`🔷🔷 ${dayOfWeek} (${parityWeek[parity]}) 🔷🔷
+${findedSchedule.map((value) => returnCouplesMessage(value, parity)).join('\n\n')}
   `);
   },
 });

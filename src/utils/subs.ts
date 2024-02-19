@@ -1,12 +1,8 @@
 import { db } from '../structures/client.js';
 
-export const getUserSubscription = (id: number) => {
-  return db.data.subscription.includes(id);
-};
+export const getUserSubscription = (id: number) => db.data.subscription.includes(id);
 
-export const getAllUsersSubscriptions = () => {
-  return db.data.subscription;
-};
+export const getAllUsersSubscriptions = () => db.data.subscription;
 
 export const enableUserSubscription = (id: number) => {
   const userSub = getUserSubscription(id);

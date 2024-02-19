@@ -20,7 +20,7 @@ export default new CommandHandler({
       return ctx.reply('Завтра занятий нету');
     }
 
-    ctx.reply(`🔷🔷 ${dayOfWeek} (${parityWeek[parity]}) 🔷🔷
+    return ctx.reply(`🔷🔷 ${dayOfWeek} (${parityWeek[parity]}) 🔷🔷
 ${findedSchedule.map((value) => returnCouplesMessage(value, parity)).join('\n\n')}
   `);
   },

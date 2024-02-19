@@ -1,6 +1,10 @@
 import { Markup } from 'telegraf';
 import { CommandHandler } from '../structures/command.js';
-import { disableUserSubscription, enableUserSubscription, getUserSubscription } from '../utils/subs.js';
+import {
+  disableUserSubscription,
+  enableUserSubscription,
+  getUserSubscription,
+} from '../utils/subs.js';
 import { client } from '../index.js';
 
 export default new CommandHandler({

@@ -1,7 +1,6 @@
-export type Schedule = {
-  day: string;
-  couples: Couples[];
-};
+export type Parity = 'numerator' | 'denominator';
+
+export type ScheduleParity = ['numerator' | 'denominator'];
 
 export type Couples = {
   name: string;
@@ -13,10 +12,11 @@ export type Couples = {
   weekNumbers?: number[];
 };
 
+export type Schedule = {
+  day: string;
+  couples: Couples[];
+};
+
 export type Subscription = {
   userId: number;
 };
-
-export type Parity = 'numerator' | 'denominator';
-
-export type ScheduleParity = ['numerator' | 'denominator'];
