@@ -1,10 +1,10 @@
 import { DateTime } from 'luxon';
 import { CommandHandler } from '../structures/command.js';
 import {
-  returnAllSchedule,
+  getAllSchedule,
   parityWeek,
   returnCouplesMessage,
-  returnScheduleFromDayOfWeek,
+  getScheduleFromDayOfWeek,
 } from '../utils/utils.js';
 
 export default new CommandHandler({
@@ -12,9 +12,9 @@ export default new CommandHandler({
   async execute(ctx) {
     const nextDay = DateTime.now().plus({ day: 1 });
 
-    const { scheduleJson, weekNumber, dayOfWeek, parity } = returnAllSchedule(nextDay);
+    const { scheduleJson, weekNumber, dayOfWeek, parity } = getAllSchedule(nextDay);
 
-    const findedSchedule = returnScheduleFromDayOfWeek(scheduleJson, dayOfWeek, parity, weekNumber);
+    const findedSchedule = getScheduleFromDayOfWeek(scheduleJson, dayOfWeek, parity, weekNumber);
 
     if (!findedSchedule?.length) {
       return ctx.reply('Завтра занятий нету');

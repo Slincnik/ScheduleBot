@@ -50,17 +50,16 @@ export const parityOfWeek = (newDate: DateTime | undefined = DateTime.now()): Pa
 export const returnCouplesMessage = (couples: Couples, parity: Parity) =>
   // @ts-ignore
   `${numberCouples[couples.time]} пара (${couples.time}) ${
-    // eslint-disable-next-line no-use-before-define
     couples.subgroup ? `(${subgroupParityWeek[parity]})` : ''
   } \n${couples.name} [${couples.teacher}] [${couples.auditory}]`;
 
-export const returnScheduleFromDayOfWeek = (
+export const getScheduleFromDayOfWeek = (
   scheduleJson: Schedule[],
   dayOfWeek: string,
   parity: Parity,
   weekNumber: number,
 ) => {
-  const newSchedule = [...scheduleJson]
+  const newSchedule = scheduleJson
     .find(({ day }) => day === dayOfWeek)
     ?.couples?.filter(
       ({ parity: coupleParity, weekNumbers }) =>
@@ -69,12 +68,12 @@ export const returnScheduleFromDayOfWeek = (
   return newSchedule;
 };
 
-export const returnScheduleFromWeek = (
+export const getScheduleFromWeek = (
   scheduleJson: Schedule[],
   parity: Parity,
   weekNumber: number,
 ) => {
-  const newSchedule = [...scheduleJson].map((value) => ({
+  const newSchedule = scheduleJson.map((value) => ({
     day: value.day,
     couples: value.couples.filter(
       ({ parity: couplesParity, weekNumbers }) =>
@@ -90,7 +89,7 @@ export const loadJSON = (path: string) => {
   return JSON.parse(readFile);
 };
 
-export const returnAllSchedule = (newDate?: DateTime) => {
+export const getAllSchedule = (newDate?: DateTime) => {
   const scheduleJson: Schedule[] = loadJSON('./schedule.json');
 
   const currentDate = newDate || DateTime.now();

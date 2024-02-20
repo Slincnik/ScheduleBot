@@ -4,10 +4,10 @@ import { DateTime } from 'luxon';
 import Client from './structures/client.js';
 
 import {
-  returnAllSchedule,
+  getAllSchedule,
   parityWeek,
   returnCouplesMessage,
-  returnScheduleFromDayOfWeek,
+  getScheduleFromDayOfWeek,
 } from './utils/utils.js';
 import { getAllUsersSubscriptions } from './utils/subs.js';
 
@@ -46,14 +46,9 @@ new CronJob(
 
       const nextDay = DateTime.now().plus({ day: 1 });
 
-      const { scheduleJson, weekNumber, dayOfWeek, parity } = returnAllSchedule(nextDay);
+      const { scheduleJson, weekNumber, dayOfWeek, parity } = getAllSchedule(nextDay);
 
-      const findedSchedule = returnScheduleFromDayOfWeek(
-        scheduleJson,
-        dayOfWeek,
-        parity,
-        weekNumber,
-      );
+      const findedSchedule = getScheduleFromDayOfWeek(scheduleJson, dayOfWeek, parity, weekNumber);
 
       result.forEach(async (userId) => {
         if (!findedSchedule?.length) {

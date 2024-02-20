@@ -1,17 +1,17 @@
 import { CommandHandler } from '../structures/command.js';
 import {
-  returnAllSchedule,
+  getAllSchedule,
   parityWeek,
   returnCouplesMessage,
-  returnScheduleFromDayOfWeek,
+  getScheduleFromDayOfWeek,
 } from '../utils/utils.js';
 
 export default new CommandHandler({
   name: '👁 Schedule',
   async execute(ctx) {
-    const { scheduleJson, weekNumber, dayOfWeek, parity } = returnAllSchedule();
+    const { scheduleJson, weekNumber, dayOfWeek, parity } = getAllSchedule();
 
-    const findedSchedule = returnScheduleFromDayOfWeek(scheduleJson, dayOfWeek, parity, weekNumber);
+    const findedSchedule = getScheduleFromDayOfWeek(scheduleJson, dayOfWeek, parity, weekNumber);
 
     if (!findedSchedule?.length) {
       return ctx.reply('Сегодня занятий нету');
