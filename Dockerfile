@@ -1,5 +1,4 @@
 FROM node:current-alpine as build
-ENV NODE_ENV=production
 WORKDIR /opt/app
 ADD package*.json ./
 RUN yarn install
