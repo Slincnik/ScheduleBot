@@ -2,7 +2,7 @@ FROM node:current-alpine as build
 ENV NODE_ENV=production
 WORKDIR /opt/app
 ADD package*.json ./
-RUN yarn --production
+RUN yarn install
 ADD . .
 RUN yarn build
 
@@ -11,5 +11,5 @@ ENV NODE_ENV=production
 WORKDIR /opt/app
 COPY --from=build /opt/app/dist ./dist
 ADD package*.json ./
-RUN yarn --production
+RUN yarn install --production
 CMD ["yarn", "start"]
