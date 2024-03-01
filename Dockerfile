@@ -1,14 +1,15 @@
-FROM node:current-alpine
-
+FROM node:current-alpine as build
 ENV NODE_ENV=production
-
-RUN mkdir -p /app/dist
-WORKDIR /app
-
-COPY package.json ./
-
+WORKDIR /opt/app
+ADD package*.json ./
 RUN yarn --production
+ADD . .
+RUN yarn build
 
-COPY /dist /app/dist
-
-CMD [ "yarn", "start" ]
+FROM node:current-alpine
+ENV NODE_ENV=production
+WORKDIR /opt/app
+COPY --from=build /opt/app/dist ./dist
+ADD package*.json ./
+RUN yarn --production
+CMD ["yarn", "start"]
