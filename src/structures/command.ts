@@ -10,10 +10,12 @@ type ExecuteReturn = Promise<void | Message.TextMessage>;
 
 type ExecuteFunction = (ctx: ExecuteContext) => ExecuteReturn;
 
+type TypeExecutedCommand = (ctx: ExecuteContext, args: string[]) => ExecuteReturn;
+
 export type CommandType = {
   name: string;
   isDev?: boolean;
-  execute: ExecuteFunction;
+  execute: TypeExecutedCommand;
 };
 
 export type ImportCommand = {
@@ -32,8 +34,9 @@ export class CommandHandler {
     if (this.options.isDev && ctx.message!.from.id !== Number(process.env.ADMIN_ID)) {
       return ctx.reply('Данная команда предназначена только для разработчиков!');
     }
+    const args = ctx.message.text.split(' ').slice(1);
 
-    const result = await this.options.execute(ctx);
+    const result = await this.options.execute(ctx, args);
 
     return result;
   }
