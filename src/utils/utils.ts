@@ -47,10 +47,10 @@ export const parityOfWeek = (newDate: DateTime | undefined = DateTime.now()): Pa
   return weekNumber % 2 ? 'numerator' : 'denominator';
 };
 
-export const returnCouplesMessage = (couples: Couples, parity: Parity) =>
+export const returnCouplesMessage = (couples: Couples) =>
   // @ts-ignore
   `${numberCouples[couples.time]} пара (${couples.time}) ${
-    couples.subgroup ? `(${subgroupParityWeek[parity]})` : ''
+    couples.subgroup ? `(2 п/г)` : ''
   } \n${couples.name} [${couples.teacher}] [${couples.auditory}]`;
 
 export const getScheduleFromDayOfWeek = (

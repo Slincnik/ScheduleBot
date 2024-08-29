@@ -58,7 +58,7 @@ new CronJob(
         await client.telegram.sendMessage(
           userId,
           `🔷🔷 ${dayOfWeek} (${parityWeek[parity]}) 🔷🔷\n${findedSchedule
-            .map((value) => returnCouplesMessage(value, parity))
+            .map((value) => returnCouplesMessage(value))
             .join('\n\n')}`,
         );
       });
