@@ -18,7 +18,7 @@ export default new CommandHandler({
     }
 
     return ctx.reply(`🔷🔷 ${dayOfWeek} (${parityWeek[parity]}) 🔷🔷
-${findedSchedule.map((value) => returnCouplesMessage(value, parity)).join('\n\n')}
+${findedSchedule.map((value) => returnCouplesMessage(value)).join('\n\n')}
   `);
   },
 });

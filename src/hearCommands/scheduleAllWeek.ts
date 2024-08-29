@@ -20,7 +20,7 @@ export default new CommandHandler({
             return `🔷🔷 ${value.day} 🔷🔷\nНет пар`;
           }
           return `🔷🔷 ${value.day} 🔷🔷\n${value.couples
-            .map((v) => returnCouplesMessage(v, parity))
+            .map((v) => returnCouplesMessage(v))
             .join('\n\n')}`;
         })
         .join('\n\n')}`,
