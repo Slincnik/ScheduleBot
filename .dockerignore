@@ -1,0 +1,9 @@
+node_modules
+.gitignore
+.vscode
+dist
+.eslintignore
+.eslintrc
+.prettierrc
+env.d.ts
+.git

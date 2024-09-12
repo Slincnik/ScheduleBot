@@ -1,14 +1,19 @@
-FROM node:current-alpine as build
-WORKDIR /opt/app
-ADD package*.json ./
-RUN yarn install
-ADD . .
-RUN yarn build
+FROM node:lts-alpine as base
 
-FROM node:current-alpine
-ENV NODE_ENV=production
-WORKDIR /opt/app
-COPY --from=build /opt/app/dist ./dist
-ADD package*.json ./
-RUN yarn install --production
-CMD ["yarn", "start"]
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
+
+
+RUN mkdir /app
+WORKDIR /app
+
+COPY . /app
+
+FROM base AS prod-deps
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-lockfile --ignore-scripts
+
+FROM base
+COPY --from=prod-deps /app/node_modules /app/node_modules
+
+CMD ["pnpm", "start"]
