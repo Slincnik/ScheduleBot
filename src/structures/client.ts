@@ -4,8 +4,7 @@ import { dirname } from 'path';
 import { glob } from 'glob';
 import { JSONFileSyncPreset } from 'lowdb/node';
 
-import { CommandType, ImportCommand } from './command.js';
-
+import { Command, CommandOptions } from './command.js';
 import { BOT_IS_DEV } from '../utils/utils.js';
 
 config();
@@ -19,19 +18,19 @@ export const db = JSONFileSyncPreset<{
 });
 
 export default class ExtendedClient extends Telegraf<Context> {
-  public hearsCommands: Map<string, CommandType> = new Map();
-
-  public commands: Map<string, CommandType> = new Map();
+  private hearsCommands: Map<string, CommandOptions> = new Map();
+  private commands: Map<string, CommandOptions> = new Map();
 
   constructor(token: string, options?: Partial<Telegraf.Options<Context>>) {
     super(token, options);
+    this.setupMiddleware();
+  }
 
+  private setupMiddleware() {
     this.use(async (ctx, next) => {
-      if (IS_DEV === 'true' && ctx.message!.from.id !== Number(process.env.ADMIN_ID)) {
-        ctx.reply(BOT_IS_DEV);
-        await next();
+      if (IS_DEV === 'true' && ctx.message?.from.id !== Number(process.env.ADMIN_ID)) {
+        await ctx.reply(BOT_IS_DEV);
       }
-
       await next();
     });
   }
@@ -42,36 +41,51 @@ export default class ExtendedClient extends Telegraf<Context> {
     await this.launch();
   }
 
-  async importFile(filePath: string) {
+  private async importFile(filePath: string) {
     return (await import(`file://${filePath}`))?.default;
   }
 
-  async registerModules() {
+  private async registerModules() {
     const __dirname = dirname(new URL(import.meta.url).pathname);
-    // Hears Handler
-    const hearsFiles = await glob(`${__dirname}/../hearCommands/*{.ts,.js}`);
+    await this.registerCommands(__dirname);
+  }
 
-    hearsFiles.forEach(async (filePath) => {
-      const command: ImportCommand = await this.importFile(filePath);
+  private async registerCommands(baseDir: string) {
+    const commandFiles = await glob(`${baseDir}/../commands/*{.ts,.js}`);
+    let registeredCount = 0;
 
-      if (!command.options.name) return;
+    for (const filePath of commandFiles) {
+      try {
+        await this.registerCommand(filePath, this.commands, (command) =>
+          this.command(command.options.name, (ctx) => command.executeCommand(ctx)),
+        );
+        registeredCount++;
+      } catch (error) {
+        console.error(`Error registering command from ${filePath}:`, error);
+      }
+    }
 
-      this.hearsCommands.set(command.options.name, command.options);
+    console.log(`Total commands registered: ${registeredCount}`);
+    await this.setCommandDescriptions();
+  }
 
-      this.hears(command.options.name, (ctx) => command.executeCommand(ctx));
-    });
+  private async registerCommand(
+    filePath: string,
+    commandMap: Map<string, CommandOptions>,
+    registerFn: (command: Command) => void,
+  ) {
+    const command: Command = await this.importFile(filePath);
+    if (command?.options?.name) {
+      commandMap.set(command.options.name, command.options);
+      registerFn(command);
+    }
+  }
 
-    // Command Handler
-    const commandFiles = await glob(`${__dirname}/../commands/*{.ts,.js}`);
-
-    commandFiles.forEach(async (filePath) => {
-      const command: ImportCommand = await this.importFile(filePath);
-
-      if (!command.options.name) return;
-
-      this.commands.set(command.options.name, command.options);
-
-      this.command(command.options.name, (ctx) => command.executeCommand(ctx));
-    });
+  private async setCommandDescriptions() {
+    const commands = Array.from(this.commands.values()).map((command) => ({
+      command: command.name,
+      description: command.description,
+    }));
+    await this.telegram.setMyCommands(commands);
   }
 }

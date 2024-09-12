@@ -18,39 +18,21 @@ export const subgroupParityWeek = {
   denominator: '2 п/г',
 };
 
-export const BOT_IS_DEV = 'Бот на данный момент находиться в разработке. Скоро верну прод';
+export const BOT_IS_DEV = 'Бот на данный момент находится в разработке. Скоро верну прод';
 
-/**
- * Берет текущую дату и возвращает номер недели от 1 сентября
- * @returns {number}
- */
-export const getWeekNumber = (newDate?: DateTime): number => {
-  const firstSeptemberDate = DateTime.fromObject({ month: 9, day: 1, year: 2023 }).startOf('week');
+const FIRST_SEPTEMBER_DATE = DateTime.fromObject({ month: 9, day: 1, year: 2023 }).startOf('week');
 
-  // Получаем текущую дату или нужную нам дату
-  const nowDate = newDate || DateTime.now();
-
-  // Вычисляем разницу в неделях между нынешней датой и 1 сентября 2023 года
-  const diffInWeeks = nowDate.diff(firstSeptemberDate, 'weeks').weeks;
-
+export const getWeekNumber = (date: DateTime = DateTime.now()): number => {
+  const diffInWeeks = date.diff(FIRST_SEPTEMBER_DATE, 'weeks').weeks;
   return Math.floor(diffInWeeks + 1);
 };
 
-/**
- * @param {DateTime=} newDate - Необязательный аргумент, устанавливается нужная дата.
- * Берет последний день недели и возвращает чётность недели
- * @returns {Parity}
- */
-export const parityOfWeek = (newDate: DateTime | undefined = DateTime.now()): Parity => {
-  const { weekNumber } = newDate;
+export const parityOfWeek = (date: DateTime = DateTime.now()): Parity =>
+  date.weekNumber % 2 ? 'numerator' : 'denominator';
 
-  return weekNumber % 2 ? 'numerator' : 'denominator';
-};
-
-export const returnCouplesMessage = (couples: Couples) =>
-  // @ts-ignore
-  `${numberCouples[couples.time]} пара (${couples.time}) ${
-    couples.subgroup ? `(2 п/г)` : ''
+export const returnCouplesMessage = (couples: Couples): string =>
+  `${numberCouples[couples.time as keyof typeof numberCouples]} пара (${couples.time}) ${
+    couples.subgroup ? '(2 п/г)' : ''
   } \n${couples.name} [${couples.teacher}] [${couples.auditory}]`;
 
 export const getScheduleFromDayOfWeek = (
@@ -58,49 +40,61 @@ export const getScheduleFromDayOfWeek = (
   dayOfWeek: string,
   parity: Parity,
   weekNumber: number,
-) => {
-  const newSchedule = scheduleJson
+): Couples[] | undefined =>
+  scheduleJson
     .find(({ day }) => day === dayOfWeek)
     ?.couples?.filter(
       ({ parity: coupleParity, weekNumbers }) =>
         coupleParity.includes(parity) && (!weekNumbers || weekNumbers.includes(weekNumber)),
     );
-  return newSchedule;
-};
 
 export const getScheduleFromWeek = (
   scheduleJson: Schedule[],
   parity: Parity,
   weekNumber: number,
-) => {
-  const newSchedule = scheduleJson.map((value) => ({
-    day: value.day,
-    couples: value.couples.filter(
+): { day: string; couples: Couples[] }[] =>
+  scheduleJson.map(({ day, couples }) => ({
+    day,
+    couples: couples.filter(
       ({ parity: couplesParity, weekNumbers }) =>
         couplesParity.includes(parity) && (!weekNumbers || weekNumbers.includes(weekNumber)),
     ),
   }));
 
-  return newSchedule;
-};
-
-export const loadJSON = (path: string) => {
-  const readFile = fs.readFileSync(new URL(path, import.meta.url)) as unknown as string;
+export const loadJSON = <T>(path: string): T => {
+  const readFile = fs.readFileSync(new URL(path, import.meta.url), 'utf-8');
   return JSON.parse(readFile);
 };
 
-export const getAllSchedule = (newDate?: DateTime) => {
-  const scheduleJson: Schedule[] = loadJSON('./schedule.json');
+export function formatWeekSchedule(schedules: Schedule[], parity: Parity) {
+  const header = `Неделя: ${parityWeek[parity]}\n\n`;
 
-  const currentDate = newDate || DateTime.now();
+  const dailySchedules = schedules.map(formatDailySchedule).join('\n\n');
 
-  const weekNumber = getWeekNumber(currentDate);
-  const dayOfWeek = currentDate.setLocale('ru-RU').toLocaleString({ weekday: 'long' });
-  const parity = parityOfWeek(currentDate);
+  return header + dailySchedules;
+}
+
+export function formatDailySchedule({ day, couples }: Schedule) {
+  const header = `🔷🔷 ${day} 🔷🔷\n`;
+
+  if (!couples.length) {
+    return header + 'Нет пар';
+  }
+
+  const main = couples.map(returnCouplesMessage).join('\n\n');
+
+  return header + main;
+}
+
+export const getAllSchedule = (date: DateTime = DateTime.now()) => {
+  const scheduleJson: Schedule[] = loadJSON<Schedule[]>('./schedule.json');
+  const weekNumber = getWeekNumber(date);
+  const dayOfWeek = date.setLocale('ru-RU').toLocaleString({ weekday: 'long' });
+  const parity = parityOfWeek(date);
 
   return {
     scheduleJson,
-    currentDate,
+    currentDate: date,
     weekNumber,
     dayOfWeek,
     parity,

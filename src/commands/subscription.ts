@@ -1,14 +1,11 @@
 import { Markup } from 'telegraf';
 import { CommandHandler } from '../structures/command.js';
-import {
-  disableUserSubscription,
-  enableUserSubscription,
-  getUserSubscription,
-} from '../utils/subs.js';
+import { toggleUserSubscription, getUserSubscription } from '../utils/subs.js';
 import { client } from '../index.js';
 
 export default new CommandHandler({
   name: 'subscription',
+  description: 'Управление подпиской на рассылку расписания',
   async execute(ctx) {
     const subscription = getUserSubscription(ctx.message.from.id);
 
@@ -23,7 +20,7 @@ export default new CommandHandler({
 });
 
 client.action('sub_on', async (ctx) => {
-  const result = enableUserSubscription(ctx.from!.id);
+  const result = toggleUserSubscription(ctx.from!.id);
   await ctx.deleteMessage();
   if (!result) {
     await ctx.sendMessage('У вас уже есть подписка');
@@ -33,7 +30,7 @@ client.action('sub_on', async (ctx) => {
 });
 
 client.action('sub_off', async (ctx) => {
-  const result = disableUserSubscription(ctx.from!.id);
+  const result = toggleUserSubscription(ctx.from!.id);
   await ctx.deleteMessage();
   if (!result) {
     await ctx.sendMessage('У вас нету подписки');
