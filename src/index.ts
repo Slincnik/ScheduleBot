@@ -1,13 +1,9 @@
 import { CronJob } from 'cron';
 import { DateTime } from 'luxon';
+
 import Client from './structures/client.js';
-import {
-  getAllSchedule,
-  parityWeek,
-  getScheduleFromDayOfWeek,
-  formatDailySchedule,
-} from './utils/utils.js';
-import { getAllUsersSubscriptions } from './utils/subs.js';
+import { subscriptionManager } from './utils/subs.js';
+import { CONSTANTS, ScheduleFilter, ScheduleFormatter, ScheduleManager } from './utils/utils.js';
 
 const { BOT_TOKEN } = process.env;
 
@@ -32,10 +28,15 @@ function setupCronJob() {
 
 async function sendNextDaySchedule() {
   try {
-    const subscribers = getAllUsersSubscriptions();
+    const subscribers = subscriptionManager.getAll();
     const nextDay = DateTime.now().plus({ day: 1 });
-    const { scheduleJson, weekNumber, dayOfWeek, parity } = getAllSchedule(nextDay);
-    const schedule = getScheduleFromDayOfWeek(scheduleJson, dayOfWeek, parity, weekNumber);
+    const { scheduleJson, weekNumber, dayOfWeek, parity } = ScheduleManager.getAllSchedule(nextDay);
+    const schedule = ScheduleFilter.getScheduleFromDayOfWeek(
+      scheduleJson,
+      dayOfWeek,
+      parity,
+      weekNumber,
+    );
 
     if (!schedule) return;
 
@@ -45,8 +46,8 @@ async function sendNextDaySchedule() {
         return;
       }
 
-      const formattedSchedule = formatDailySchedule({
-        day: `${dayOfWeek} (${parityWeek[parity]})`,
+      const formattedSchedule = ScheduleFormatter.formatDailySchedule({
+        day: `${dayOfWeek} (${CONSTANTS.PARITYWEEK[parity]})`,
         couples: schedule,
       });
 

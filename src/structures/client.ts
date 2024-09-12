@@ -5,7 +5,7 @@ import { glob } from 'glob';
 import { JSONFileSyncPreset } from 'lowdb/node';
 
 import { Command, CommandOptions } from './command.js';
-import { BOT_IS_DEV } from '../utils/utils.js';
+import { CONSTANTS } from '../utils/utils.js';
 
 config();
 
@@ -29,7 +29,7 @@ export default class ExtendedClient extends Telegraf<Context> {
   private setupMiddleware() {
     this.use(async (ctx, next) => {
       if (IS_DEV === 'true' && ctx.message?.from.id !== Number(process.env.ADMIN_ID)) {
-        await ctx.reply(BOT_IS_DEV);
+        await ctx.reply(CONSTANTS.BOT_IS_DEV);
       }
       await next();
     });

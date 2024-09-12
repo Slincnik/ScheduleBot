@@ -1,19 +1,39 @@
 import { db } from '../structures/client.js';
 
-export const getUserSubscription = (id: number): boolean => db.data.subscription.includes(id);
+interface ISubscriptionManager {
+  getUser(id: number): boolean;
+  getAll(): number[];
+  toggle(id: number): boolean;
+}
 
-export const getAllUsersSubscriptions = (): number[] => db.data.subscription;
+class SubscriptionManager implements ISubscriptionManager {
+  private db: typeof db;
 
-export const toggleUserSubscription = (id: number): boolean => {
-  const isSubscribed = getUserSubscription(id);
+  constructor(database: typeof db) {
+    this.db = database;
+  }
 
-  db.update((data) => {
-    if (isSubscribed) {
-      data.subscription = data.subscription.filter((subId) => subId !== id);
-    } else {
-      data.subscription.push(id);
-    }
-  });
+  public getUser(id: number): boolean {
+    return this.db.data.subscription.includes(id);
+  }
 
-  return !isSubscribed;
-};
+  public getAll(): number[] {
+    return this.db.data.subscription;
+  }
+
+  public toggle(id: number): boolean {
+    const isSubscribed = this.getUser(id);
+
+    this.db.update((data) => {
+      if (isSubscribed) {
+        data.subscription = data.subscription.filter((subId) => subId !== id);
+      } else {
+        data.subscription.push(id);
+      }
+    });
+
+    return !isSubscribed;
+  }
+}
+
+export const subscriptionManager = new SubscriptionManager(db);
