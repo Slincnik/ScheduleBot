@@ -52,7 +52,7 @@ class ScheduleFormatter {
 
   static formatWeekSchedule(schedules: Schedule[], parity: Parity): string {
     const header = `Неделя: ${CONSTANTS.PARITYWEEK[parity]}\n\n`;
-    const dailySchedules = schedules.map(this.formatDailySchedule).join('\n\n');
+    const dailySchedules = schedules.map(ScheduleFormatter.formatDailySchedule).join('\n\n');
     return header + dailySchedules;
   }
 
@@ -61,7 +61,7 @@ class ScheduleFormatter {
     if (!couples.length) {
       return header + 'Нет пар';
     }
-    const main = couples.map(this.returnCouplesMessage).join('\n\n');
+    const main = couples.map(ScheduleFormatter.returnCouplesMessage).join('\n\n');
     return header + main;
   }
 }
