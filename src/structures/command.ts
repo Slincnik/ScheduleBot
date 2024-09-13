@@ -32,12 +32,20 @@ export class CommandHandler implements Command {
   }
 
   async executeCommand(ctx: ExecuteContext): ExecuteReturn {
-    if (this.isDeveloperCommand(ctx)) {
-      return ctx.reply('Данная команда предназначена только для разработчиков!');
-    }
+    try {
+      if (this.isDeveloperCommand(ctx)) {
+        return ctx.reply('Данная команда предназначена только для разработчиков!');
+      }
 
-    const args = this.parseArguments(ctx);
-    return this.options.execute(ctx, args);
+      const args = this.parseArguments(ctx);
+      const command = await this.options.execute(ctx, args);
+      return command;
+    } catch (error) {
+      console.error(`Error executing command ${this.options.name}:`, error);
+      return ctx.reply(
+        'Произошла ошибка при выполнении команды. Скажите что этот фрик на Дане опять что-то сломал',
+      );
+    }
   }
 
   private isDeveloperCommand(ctx: ExecuteContext): boolean {
