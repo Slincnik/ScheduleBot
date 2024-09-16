@@ -16,7 +16,7 @@
   "dependencies": {
     "cron": "^3.1.6",
     "dotenv": "^16.3.1",
-    "glob": "^10.3.10",
+    "glob": "^11.0.0",
     "lowdb": "^7.0.1",
     "luxon": "^3.4.3",
     "telegraf": "^4.13.1"
